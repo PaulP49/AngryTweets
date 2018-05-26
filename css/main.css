@@ -8,9 +8,10 @@
    Base styles: opinionated defaults
    ========================================================================== */
 
-body, html {
+body, html, #map {
   height: 100%;
   length: 100%;
+  width: 100%;
   padding: 0;
   margin: 0;
 }
@@ -93,14 +94,6 @@ textarea {
     padding: 0.2em 0;
 }
 
-#map {
-  position: center;
-  height: 100%;
-  length: 100%;
-  padding: 0;
-  margin: 0;
-}
-
 .controls {
   margin-top: 10px;
   border: 1px solid transparent;
@@ -142,8 +135,13 @@ textarea {
   font-size: 13px;
   font-weight: 300;
 }
+
 #target {
   width: 345px;
+}
+
+#map {
+  z-index: -1;
 }
 
 /* ==========================================================================

@@ -18,10 +18,10 @@ window.onload = function () {
     {location: new google.maps.LatLng(37.785, -122.435), weight: 3}
   ];
 
-  var sanFrancisco = new google.maps.LatLng(37.774546, -122.433523);
+  var centerpoint = new google.maps.LatLng(37.774546, -122.433523);
 
   map = new google.maps.Map(document.getElementById('map'), {
-    center: sanFrancisco,
+    center: centerpoint,
     zoom: 13,
     mapTypeId: 'roadmap'
   });

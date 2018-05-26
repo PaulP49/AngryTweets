@@ -3031,6 +3031,7 @@ input[type="button"].btn-block {
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 0.25rem;
+  z-index: 2;
 }
 
 .dropdown-menu-right {
@@ -3932,6 +3933,7 @@ input[type="button"].btn-block {
   -ms-flex-pack: justify;
   justify-content: space-between;
   padding: 0.5rem 1rem;
+  z-index: 2;
 }
 
 .navbar > .container,
