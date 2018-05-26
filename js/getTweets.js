@@ -31,14 +31,14 @@ async function getBearerToken() {
 function Trend(trendName, tweets) {
   this.trendName = trendName;
   this.tweets = tweets;
-  var tone;
+  this.tone;
 
   Trend.prototype.setTone = function(tone) {
     this.tone = tone;
   };
 
   Trend.prototype.getTone = function() {
-    return tone;
+    return this.tone;
   };
 }
 
@@ -61,6 +61,7 @@ async function getTweets(latitude, longitude) {
   let tweets = new Tweets(trendobjects, longitude, latitude);
 
   // analyze tone
+  await analyzeText(tweets);
 
   console.log(tweets);
 
