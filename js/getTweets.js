@@ -130,7 +130,11 @@ async function searchTrendingTweets(bearerToken, trends) {
   var trendObjects = [];
 
   for (var j = 0; j < results.length; j++) {
-    trendObjects[j] = new Trend(names[j], results[j].map(x => x["full_text"]));
+    var texts = results[j].map(x => x["full_text"]);
+    console.log(texts);
+    texts.forEach(x => x.replace(/(\r\n\t|\n|\r\t)/gm,""));
+    console.log(texts);
+    trendObjects[j] = new Trend(names[j], texts);
   }
 
   return trendObjects;
