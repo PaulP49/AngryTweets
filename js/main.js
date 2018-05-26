@@ -44,7 +44,7 @@ window.onload = function () {
   var markers = [];
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
-  searchBox.addListener('places_changed', function() {
+  searchBox.addListener('places_changed', async function() {
     var places = searchBox.getPlaces();
 
     if (places.length == 0) {
@@ -89,6 +89,9 @@ window.onload = function () {
     map.fitBounds(bounds);
     console.log("Latitude: " + bounds.f.b);
     console.log("Longitude: " + bounds.b.b);
-    //getTweets(bounds.f.b, bounds.b.b);
+
+    let tweets = await getTweets(bounds.f.b, bounds.b.b);
+
+    console.log(tweets);
   });
 };
