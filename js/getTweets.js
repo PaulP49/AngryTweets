@@ -42,19 +42,33 @@ function Trend(trendName, tweets) {
   };
 }
 
+function Tweets(trend, longitude, latitude) {
+  this.trend = trend;
+  this.longitude = longitude;
+  this.latitude = latitude;
+}
+
 async function getTweets(latitude, longitude) {
   let bearerToken =  await getBearerToken();
   console.log(bearerToken);
 
-  var woeid = await getNearestLocationWithTrends(bearerToken);
+  var woeid = await getNearestLocationWithTrends(bearerToken, latitude, longitude);
 
   var trends = await getTrendsForLocation(bearerToken, woeid);
 
-  return await searchTrendingTweets(bearerToken, trends);
+  let trendobjects = await searchTrendingTweets(bearerToken, trends);
+
+  let tweets = new Tweets(trendobjects, longitude, latitude);
+
+  // analyze tone
+
+  console.log(tweets);
+
+  return tweets;
 }
 
-async function getNearestLocationWithTrends(bearerToken) {
-  var searchString =  "?lat=37.773972&long=-122.431297";
+async function getNearestLocationWithTrends(bearerToken, latitude, longitude) {
+  var searchString =  "?lat=" + latitude + "&long=" + longitude;
 
   var response = await fetch(corsProxy + closestWithTrendingEndpoint + searchString, {
     method: 'GET',
@@ -70,7 +84,7 @@ async function getNearestLocationWithTrends(bearerToken) {
 
   var data = await response.json();
 
-  console.log(data[0].woeid)
+  console.log(data[0])
   return data[0].woeid;
 }
 
@@ -113,8 +127,6 @@ async function searchTrendingTweets(bearerToken, trends) {
   await Promise.all(searches).then(res => results = res);
 
   var trendObjects = [];
-
-  console.log(results[0]);
 
   for (var j = 0; j < results.length; j++) {
     trendObjects[j] = new Trend(names[j], results[j].map(x => x["full_text"]));
