@@ -1,8 +1,10 @@
 window.onload = function () {
   /* Data points defined as a mixture of WeightedLocation and LatLng objects */
-   heatMapData = [
+
+  heatMapData = [
     {location: new google.maps.LatLng(37.782, -122.447), weight: 0.5}
   ];
+  var gMVCArray = new google.maps.MVCArray(heatMapData);
 
   var centerpoint = new google.maps.LatLng(37.774546, -122.433523);
 
@@ -13,7 +15,7 @@ window.onload = function () {
   });
 
   heatmap = new google.maps.visualization.HeatmapLayer({
-    data: heatMapData
+    data: gMVCArray
   });
   heatmap.setMap(map);
 
@@ -76,11 +78,10 @@ window.onload = function () {
     console.log("Latitude: " + bounds.f.b);
     console.log("Longitude: " + bounds.b.b);
 
-    //let tweets = await getTweets(bounds.f.b, bounds.b.b);
+    let tweets = await getTweets(bounds.f.b, bounds.b.b);
 
     //console.log(tweets);
-    //setupMap(tweets.trend[0].getTone(), bounds.f.b, bounds.b.b);
-    setupMap(new ToneObject(0.2, 0.3, 0.4, 0.5), bounds.f.b, bounds.b.b);
+    setupMap(tweets.trend[0].getTone(), bounds.f.b, bounds.b.b);
   });
 
 };
@@ -90,8 +91,9 @@ function setupMap(averages, lat, long) {
   console.log(lat);
   console.log(long);
   console.log(averages);
-  heatMapData.push({location: new google.maps.LatLng(lat, long), weight: 4});
-  heatMapData.push({location: new google.maps.LatLng(lat++, long++), weight: 4});
+  heatMapData.pop();
+  heatMapData.push({location: new google.maps.LatLng(lat, long), weight: averages.joyAverage*100});
+  heatmap.set('radius', 100);
   console.log(heatMapData);
 
 
