@@ -87,7 +87,9 @@ window.onload = function () {
       }
     });
     map.fitBounds(bounds);
+    console.log(bounds.f.b);
+    console.log(bounds.b.b);
+    //getTweets(bounds.f.b, bounds.b.b);
   });
-
 
   };
