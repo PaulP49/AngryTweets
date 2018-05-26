@@ -3,7 +3,7 @@ var ToneObject = function(joyAverage, angryAverage, fearAverage, sadnessAverage,
   this.angryAverage = angryAverage;
   this.fearAverage = fearAverage;
   this.sadnessAverage = sadnessAverage;
-  this.angryAverage = analyticalAverage;
-  this.fearAverage = fearAverage;
+  this.analyticalAverage = analyticalAverage;
+  this.tentativeAverage = tentativeAverage;
   this.criticalAverage = criticalAverage;
 };
