@@ -68,6 +68,27 @@ async function getTweets(latitude, longitude) {
   return tweets;
 }
 
+async function getTweetsForTrend(latitude, longitude, trend) {
+  let bearerToken =  await getBearerToken();
+
+  var woeid = await getNearestLocationWithTrends(bearerToken, latitude, longitude);
+
+  let trends = [];
+
+  trends.push(encodeURIComponent(trend));
+
+  let trendObjects = await searchTrendingTweets(bearerToken, trends);
+
+  let tweets = new Tweets(trendObjects, longitude, latitude);
+
+  // analyze tone
+  await analyzeText(tweets);
+
+  console.log(tweets);
+
+  return tweets;
+}
+
 async function getNearestLocationWithTrends(bearerToken, latitude, longitude) {
   var searchString =  "?lat=" + latitude + "&long=" + longitude;
 
