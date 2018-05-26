@@ -19,9 +19,13 @@ var tentativeAverage;
 var criticalAverage;
 
 async function analyzeText(tweetObject) {
+  let requests = [];
+  var results = [];
   for (var trendIndex = 0; trendIndex < tweetObject.trend.length; trendIndex++) {
-    await watsonRequest(tweetObject.trend[trendIndex]);
+    requests[trendIndex] = watsonRequest(tweetObject.trend[trendIndex]);
   }
+
+  await Promise.all(requests).then(res => results = res);
 }
 
 async function watsonRequest(trend) {
