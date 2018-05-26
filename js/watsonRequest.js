@@ -6,11 +6,17 @@ var joyArray;
 var angryArray;
 var sadnessArray;
 var fearArray;
+var analyticalArray;
+var tentativeArray;
+var criticalArray;
 
 var joyAverage;
 var angryAverage;
 var sadnessAverage;
 var fearAverage;
+var analyticalAverage;
+var tentativeAverage;
+var criticalAverage;
 
 async function analyzeText(tweetObject) {
   for (var trendIndex = 0; trendIndex < tweetObject.trend.length; trendIndex++) {
@@ -43,11 +49,10 @@ async function watsonRequest(trend) {
   console.log(response);
 
   extractScores(data);
+
   let toneobj = createNewToneObject();
-  console.log(toneobj);
   trend.setTone(toneobj);
   console.log(trend.getTone());
-  console.log("new tone object created: " +trend.getTone().sadnessAverage);
 }
 
 function buidText(tweetArray) {
@@ -64,57 +69,108 @@ function extractScores(data) {
   angryArray = [];
   sadnessArray = [];
   fearArray = [];
+  analyticalArray = [];
+  tentativeArray = [];
+  criticalArray = [];
 
   joyAverage = 0;
   angryAverage = 0;
   sadnessAverage = 0;
   fearAverage = 0;
+  analyticalAverage = 0;
+  tentativeAverage = 0;
+  criticalAverage = 0;
+
+  var tweetCounter = 0;
 
   for (var sentenceIndex = 0; sentenceIndex < data.sentences_tone.length; sentenceIndex++) {
+    var counterIncFlag = false;
     for (var toneIndex = 0; toneIndex < data.sentences_tone[sentenceIndex].tones.length; toneIndex++) {
       var toneObject = data.sentences_tone[sentenceIndex].tones[toneIndex];
       if (toneObject.tone_id === "joy") {
         console.log("added " +toneObject.score +" to joyArray");
         joyArray.push(toneObject.score);
+        if (!counterIncFlag) {
+          tweetCounter++;
+          counterIncFlag = true;
+        }
       } if (toneObject.tone_id === "anger") {
         console.log("added " +toneObject.score +" to angryArray");
         angryArray.push(toneObject.score);
+        if (!counterIncFlag) {
+          tweetCounter++;
+          counterIncFlag = true;
+        }
       } if (toneObject.tone_id === "fear") {
         console.log("added " +toneObject.score +" to fearArray");
         fearArray.push(toneObject.score);
+        if (!counterIncFlag) {
+          tweetCounter++;
+          counterIncFlag = true;
+        }
       } if (toneObject.tone_id === "sadness") {
         console.log("added " +toneObject.score +" to sadnessArray");
         sadnessArray.push(toneObject.score);
+        if (!counterIncFlag) {
+          tweetCounter++;
+          counterIncFlag = true;
+        }
+      } if (toneObject.tone_id === "analytical") {
+        console.log("added " +toneObject.score +" to analyticalArray");
+        analyticalArray.push(toneObject.score);
+        if (!counterIncFlag) {
+          tweetCounter++;
+          counterIncFlag = true;
+        }
+      } if (toneObject.tone_id === "tentative") {
+        console.log("added " +toneObject.score +" to tentativeArray");
+        tentativeArray.push(toneObject.score);
+        if (!counterIncFlag) {
+          tweetCounter++;
+          counterIncFlag = true;
+        }
+      } if (toneObject.tone_id === "critical") {
+        console.log("added " +toneObject.score +" to criticalArray");
+        criticalArray.push(toneObject.score);
+        if (!counterIncFlag) {
+          tweetCounter++;
+          counterIncFlag = true;
+        }
       }
     }
   }
-  computeAverageValues();
-
+  computeAverageValues(tweetCounter);
 }
 
-function computeAverageValues() {
-  joyAverage = computeAverage(joyArray);
+function computeAverageValues(tweetCount) {
+  joyAverage = computeAverage(joyArray, tweetCount);
   console.log("joyAverage: " +joyAverage);
-  angryAverage = computeAverage(angryArray);
+  angryAverage = computeAverage(angryArray, tweetCount);
   console.log("angryAverage: " +angryAverage);
-  sadnessAverage = computeAverage(sadnessArray);
+  sadnessAverage = computeAverage(sadnessArray, tweetCount);
   console.log("sadnessAverage: " +sadnessAverage);
-  fearAverage = computeAverage(fearArray);
+  fearAverage = computeAverage(fearArray, tweetCount);
   console.log("fearAverage: " +fearAverage);
+  analyticalAverage = computeAverage(analyticalArray, tweetCount);
+  console.log("analyticalAverage: " +analyticalAverage);
+  tentativeAverage = computeAverage(tentativeArray, tweetCount);
+  console.log("tentativeAverage: " +tentativeAverage);
+  criticalAverage = computeAverage(criticalArray, tweetCount);
+  console.log("criticalAverage: " +criticalAverage);
 }
 
-function computeAverage(array) {
+function computeAverage(array, tweetCount) {
   var average = 0.0;
 
   for (var i = 0; i < array.length; i++) {
     average += array[i];
   }
 
-  return average / array.length;
+  return average / tweetCount;
 }
 
 function createNewToneObject() {
-  return new ToneObject(joyAverage, angryAverage, fearAverage, sadnessAverage);
+  return new ToneObject(joyAverage, angryAverage, fearAverage, sadnessAverage, analyticalAverage, tentativeAverage, criticalAverage);
 }
 
 
