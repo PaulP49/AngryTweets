@@ -125,7 +125,9 @@ async function getTrendsForLocation(bearerToken, woeid) {
     return;
   }
 
-  var data = await response.json();
+  let data = await response.json();
+
+  console.log(data);
 
   return data[0].trends;
 }
@@ -139,7 +141,7 @@ async function searchTrendingTweets(bearerToken, trends) {
   var results;
 
 
-  for (var i = 0; i < size && i < 10; i++) {
+  for (var i = 0; i < size && i < 1; i++) {
     searches[i] = searchTweets(bearerToken, trends[i].query);
     names[i] = trends[i]["name"];
 

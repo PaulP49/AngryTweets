@@ -4,83 +4,122 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title></title>
+  <title>Angry Tweets</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-  <link rel="manifest" href="site.webmanifest">
-  <link rel="apple-touch-icon" href="icon.png">
   <!-- Place favicon.ico in the root directory -->
+  <style>
+    /* Always set the map height explicitly to define the size of the div
+     * element that contains the map. */
+    #map {
+      height: 100%;
+    }
 
-  <link rel="stylesheet" href="css/bootstrap.css">
-  <link rel="stylesheet" href="css/bootstrap-grid.css">
-  <link rel="stylesheet" href="css/bootstrap-reboot.css">
+    .spinner {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      height:60px;
+      width:60px;
+      margin:0px auto;
+      -webkit-animation: rotation .6s infinite linear;
+      -moz-animation: rotation .6s infinite linear;
+      -o-animation: rotation .6s infinite linear;
+      animation: rotation .6s infinite linear;
+      border-left:6px solid rgba(0,174,239,.15);
+      border-right:6px solid rgba(0,174,239,.15);
+      border-bottom:6px solid rgba(0,174,239,.15);
+      border-top:6px solid rgba(0,174,239,.8);
+      border-radius:100%;
+    }
+
+    @-webkit-keyframes rotation {
+      from {-webkit-transform: rotate(0deg);}
+      to {-webkit-transform: rotate(359deg);}
+    }
+    @-moz-keyframes rotation {
+      from {-moz-transform: rotate(0deg);}
+      to {-moz-transform: rotate(359deg);}
+    }
+    @-o-keyframes rotation {
+      from {-o-transform: rotate(0deg);}
+      to {-o-transform: rotate(359deg);}
+    }
+    @keyframes rotation {
+      from {transform: rotate(0deg);}
+      to {transform: rotate(359deg);}
+    }
+
+    /* Optional: Makes the sample page fill the window. */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    .controls {
+      margin-top: 10px;
+      border: 1px solid transparent;
+      border-radius: 2px 0 0 2px;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      height: 32px;
+      outline: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    #pac-input {
+      background-color: #fff;
+      font-family: Roboto;
+      font-size: 15px;
+      font-weight: 300;
+      margin-left: 12px;
+      padding: 0 11px 0 13px;
+      text-overflow: ellipsis;
+      width: 300px;
+    }
+
+    #pac-input:focus {
+      border-color: #4d90fe;
+    }
+
+    .pac-container {
+      font-family: Roboto;
+    }
+
+    #type-selector {
+      color: #fff;
+      background-color: #4d90fe;
+      padding: 5px 11px 0px 11px;
+    }
+
+    #type-selector label {
+      font-family: Roboto;
+      font-size: 13px;
+      font-weight: 300;
+    }
+    #target {
+      width: 345px;
+    }
+  </style>
 
 </head>
 
 <body>
-  <!--[if lte IE 9]>
-  <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
-  <![endif]-->
-
-  <!-- Add your site or application content here -->
-
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">AngryTweets</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <li>
-          <div class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Trends
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#">Disabled</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
   <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-  <div id="map" style="width:2300px;height:1100px"></div>
+  <div id="map"></div>
+  <div id="loader"></div>
 
 
 
-  <script src="js/plugins.js"></script>
   <script src="js/getTweets.js"></script>
   <script src="js/watsonRequest.js"></script>
   <script src="js/ToneObject.js"></script>
   <script src="js/main.js"></script>
-  <script src="js/bootstrap.js"></script>
-  <script src="js/bootstrap.bundle.js"></script>
+
   <script type="text/javascript"
           src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBWs6OJi679iPY__x1thmvJn1YcfyoYgy8&libraries=visualization,places"
   async defer>
   </script>
-
-  <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
-  <script>
-    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
-    ga('create', 'UA-XXXXX-Y', 'auto'); ga('send', 'pageview')
-  </script>
-  <script src="https://www.google-analytics.com/analytics.js" async defer></script>
 </body>
 
 </html>

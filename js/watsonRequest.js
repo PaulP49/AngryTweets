@@ -28,6 +28,13 @@ async function analyzeText(tweetObject) {
   await Promise.all(requests).then(res => results = res);
 }
 
+function handleErrors(response) {
+  if (!response.ok) {
+    throw Error(response.statusText);
+  }
+  return response;
+}
+
 async function watsonRequest(trend) {
 
 
@@ -36,15 +43,36 @@ async function watsonRequest(trend) {
   console.log("send  watson request...");
   let watsonCredentials = btoa(watsonUser + ":" + watsonPassword);
 
-  var response = await fetch("https://cors-anywhere.herokuapp.com/" + watsonTokenEndpoint, {
+  var errorHappened = false;
+  var response;
+
+  response = await fetch("https://cors-anywhere.herokuapp.com/" + watsonTokenEndpoint, {
     method: 'POST',
     headers: {
       'Authorization': "Basic " + watsonCredentials,
       'Content-Type': 'application/json;charset=UTF-8'
     },
     body: JSON.stringify({text: text})
+  }).then(res => {
+    if (!res.ok) {
+      console.log("testError");
+      errorHappened = true;
+    }
+    return res;
   });
 
+
+
+  if (errorHappened) {
+    response = await fetch("https://cors-anywhere.herokuapp.com/" + watsonTokenEndpoint, {
+      method: 'POST',
+      headers: {
+        'Authorization': "Basic " + watsonCredentials,
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      body: JSON.stringify({text: text})
+    });
+  }
 
   console.log(response.status);
 

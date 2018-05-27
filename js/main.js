@@ -1,23 +1,13 @@
-window.onload = function () {
-  /* Data points defined as a mixture of WeightedLocation and LatLng objects */
+window.onload = async function () {
+  await initAutocomplete();
+};
 
-  heatMapData = [
-    {location: new google.maps.LatLng(37.782, -122.447), weight: 0.5}
-  ];
-  var gMVCArray = new google.maps.MVCArray(heatMapData);
-
-  var centerpoint = new google.maps.LatLng(37.774546, -122.433523);
-
-  map = new google.maps.Map(document.getElementById('map'), {
-    center: centerpoint,
+async function initAutocomplete() {
+  var map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: -33.8688, lng: 151.2195},
     zoom: 13,
     mapTypeId: 'roadmap'
   });
-
-  heatmap = new google.maps.visualization.HeatmapLayer({
-    data: gMVCArray
-  });
-  heatmap.setMap(map);
 
   // Create the search box and link it to the UI element.
   var input = document.getElementById('pac-input');
@@ -32,7 +22,11 @@ window.onload = function () {
   var markers = [];
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
+
   searchBox.addListener('places_changed', async function() {
+
+    document.getElementById("loader").classList.add('spinner');
+
     var places = searchBox.getPlaces();
 
     if (places.length == 0) {
@@ -44,13 +38,22 @@ window.onload = function () {
       marker.setMap(null);
     });
     markers = [];
+
     // For each place, get the icon, name and location.
     var bounds = new google.maps.LatLngBounds();
-    places.forEach(function(place) {
+
+    let place = places[0];
+
+    console.log(place);
+
+    let func = async function() {
       if (!place.geometry) {
         console.log("Returned place contains no geometry");
         return;
       }
+
+      let tweets = await getTweets(place.geometry.location.lat(), place.geometry.location.lng());
+
       var icon = {
         url: place.icon,
         size: new google.maps.Size(71, 71),
@@ -60,12 +63,45 @@ window.onload = function () {
       };
 
       // Create a marker for each place.
-      markers.push(new google.maps.Marker({
+
+      let marker = new google.maps.Marker({
         map: map,
         icon: icon,
         title: place.name,
         position: place.geometry.location
-      }));
+      });
+
+
+      let trending = tweets.trend[0];
+
+      RoundTone(trending.tone);
+
+      var contentString = '<div id="content">'+
+        '<div id="siteNotice">'+
+        '</div>'+
+        '<h1 id="firstHeading" class="firstHeading">' + trending.trendName + '</h1>'+
+        '<div id="bodyContent">'+
+        '<p>Joy: ' + trending.tone.joyAverage * 100 + '% <br>' +
+        'Anger: ' + trending.tone.angryAverage * 100 + '% <br>' +
+        'Fear: ' + trending.tone.fearAverage * 100 + '% <br>' +
+        'Sadness: ' + trending.tone.sadnessAverage * 100 + '% <br>' +
+        'Analytical: ' + trending.tone.analyticalAverage * 100 + '% <br>' +
+        'Criticism: ' + trending.tone.criticalAverage * 100 + '% <br>' +
+        '</p>'+
+        '</div>'+
+        '</div>';
+
+      var infowindow = new google.maps.InfoWindow({
+        content: contentString
+      });
+
+      marker.addListener('click', function() {
+        infowindow.open(map, marker);
+      });
+
+      markers.push(marker);
+
+
 
       if (place.geometry.viewport) {
         // Only geocodes have viewport.
@@ -73,29 +109,22 @@ window.onload = function () {
       } else {
         bounds.extend(place.geometry.location);
       }
-    });
+    };
+
+    await func();
+
+    document.getElementById("loader").classList.remove('spinner');
+
     map.fitBounds(bounds);
-    console.log("Latitude: " + bounds.f.b);
-    console.log("Longitude: " + bounds.b.b);
-
-    let tweets = await getTweets(bounds.f.b, bounds.b.b);
-
-    //console.log(tweets);
-    setupMap(tweets.trend[0].getTone(), bounds.f.b, bounds.b.b);
   });
-
-};
-
-function setupMap(averages, lat, long) {
-  console.log("Setting up the map...");
-  console.log(lat);
-  console.log(long);
-  console.log(averages);
-  heatMapData.pop();
-  heatMapData.push({location: new google.maps.LatLng(lat, long), weight: averages.joyAverage*100});
-  heatmap.set('radius', 100);
-  console.log(heatMapData);
-
-
-  console.log("Map refreshed.");
 }
+
+function RoundTone(tone) {
+  tone.joyAverage = tone.joyAverage.toFixed(2);
+  tone.angryAverage = tone.angryAverage.toFixed(2);
+  tone.fearAverage = tone.fearAverage.toFixed(2);
+  tone.sadnessAverage = tone.sadnessAverage.toFixed(2);
+  tone.analyticalAverage = tone.analyticalAverage.toFixed(2);
+  tone.criticalAverage = tone.criticalAverage.toFixed(2);
+}
+
